@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LicitaSeguro - Buscador de Licitaciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <div class="topbar-custom py-2 px-3 d-flex justify-content-between align-items-center" style="font-size: 0.85rem;">
+        <div class="d-flex gap-3">
+            <span class="d-none d-md-inline"><i class="fas fa-phone-alt me-1"></i> Soporte: 600 700 6000</span>
+            <span class="d-none d-md-inline"><i class="fas fa-globe me-1"></i> LicitaSeguro Internacional</span>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="d-flex gap-2">
+                <span>Síguenos</span>
+                <a href="https://www.instagram.com/licitaseguro2024/" class="text-white" title="Facebook" aria-label="Síguenos en Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/licitaseguro2024/" class="text-white" title="X (Twitter)" aria-label="Síguenos en X"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.instagram.com/licitaseguro2024/" class="text-white" title="LinkedIn" aria-label="Síguenos en LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://www.instagram.com/licitaseguro2024/" class="text-white" title="Instagram" aria-label="Síguenos en Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+
+            <button id="btn-alto-contraste" class="btn btn-sm btn-contraste-rojo py-0 px-2 shadow-sm" aria-label="Activar modo alto contraste">
+                <span>Modo Contraste</span>
+                <i class="fas fa-adjust"></i>
+            </button>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-gradient shadow-lg">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-uppercase tracking-wider" href="index.html">
+                <i class="fas fa-shield-alt text-warning me-2"></i> LicitaSeguro
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html"><i class="fas fa-home me-1"></i> Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="licitaciones.html"><i class="fas fa-briefcase me-1"></i> Licitaciones</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="proveedores.html"><i class="fas fa-users me-1"></i> Proveedores</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5 flex-grow-1">
+        <h1 class="mb-4 fw-bold text-primary" tabindex="0">Buscador de Licitaciones</h1>
+
+        <div class="card p-4 shadow-sm border-0 mb-4">
+            <form id="form-filtros" class="row g-3" aria-label="Filtros de búsqueda de licitaciones">
+                <div class="col-md-5">
+                    <label for="input-fecha" class="form-label fw-semibold">Fecha de consulta</label>
+                    <input type="date" class="form-control" id="input-fecha" required tabindex="0">
+                </div>
+                <div class="col-md-5">
+                    <label for="select-estado" class="form-label fw-semibold">Estado de la licitación</label>
+                    <select class="form-select" id="select-estado" required tabindex="0">
+                        <option value="" disabled selected>Seleccione un estado...</option>
+                        <option value="publicada">Publicada</option>
+                        <option value="adjudicada">Adjudicada</option>
+                        <option value="revocada">Revocada</option>
+                        <option value="suspendida">Suspendida</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-contraste-rojo w-100 py-2" tabindex="0">Buscar</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="loader" class="text-center my-5 d-none" aria-live="polite" aria-label="Cargando datos del servidor">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+            <p class="mt-2 text-muted fw-medium">Consultando Mercado Público, por favor espere...</p>
+        </div>
+
+        <div id="mensaje-alerta" class="alert d-none" role="alert" aria-live="assertive"></div>
+
+        <div id="contenedor-resultados" class="card shadow-sm border-0 d-none">
+            <div class="p-3 bg-white border-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <label for="input-filtro-palabra" class="form-label small fw-bold text-muted mb-1">Filtrar resultados en tiempo real</label>
+                        <input type="text" id="input-filtro-palabra" class="form-control form-control-sm" placeholder="Escriba palabra clave o código para reducir la lista...">
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" aria-label="Listado de licitaciones encontradas">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col" tabindex="0">Código</th>
+                            <th scope="col" tabindex="0">Nombre del Proceso</th>
+                            <th scope="col" tabindex="0">Estado</th>
+                            <th scope="col" class="text-end" tabindex="0">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-licitaciones">
+                    </tbody>
+                </table>
+            </div>
+
+            <nav class="d-flex justify-content-center p-3 border-top" aria-label="Navegación de páginas de resultados">
+                <ul class="pagination mb-0">
+                    <li class="page-item" id="btn-anterior">
+                        <button class="page-link" tabindex="0" aria-label="Página anterior">Anterior</button>
+                    </li>
+                    <li class="page-item disabled"><span class="page-link" id="info-paginacion">Página 1</span></li>
+                    <li class="page-item" id="btn-siguiente">
+                        <button class="page-link" tabindex="0" aria-label="Página siguiente">Siguiente</button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </main>
+
+    <footer class="bar-footer text-white pt-5 pb-4 mt-auto border-top border-primary border-4">
+        <div class="container text-md-start text-center">
+            <div class="row g-4">
+                <div class="col-md-4 col-lg-4 mx-auto">
+                    <h5 class="text-uppercase fw-bold mb-4">Dirección Licita Seguro</h5>
+                    <p class="small mb-1">Ministerio de Hacienda, Gobierno de Chile</p>
+                    <p class="small">Monjitas 392 - Piso 8, Santiago de Chile</p>
+                </div>
+                <div class="col-md-3 col-lg-3 mx-auto">
+                    <h5 class="text-uppercase fw-bold mb-4">Sitios relacionados</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="https://comprador.mercadopublico.cl/registrarme" class="text-white text-decoration-none small">Registro nuevos organismos compradores</a></li>
+                        <li class="mb-2"><a href="https://capacitacion.chilecompra.cl/mod/page/view.php?id=18633" class="text-white text-decoration-none small">Capacitación</a></li>
+                        <li class="mb-2"><a href="https://ayuda.mercadopublico.cl/" class="text-white text-decoration-none small">Centro de Ayuda</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 col-lg-3 mx-auto">
+                    <h5 class="text-uppercase fw-bold mb-4">Mesa de Ayuda</h5>
+                    <p class="small mb-1">600 0061 211</p>
+                    <p class="small mb-1">+56 2 2595 0820</p>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="row align-items-center">
+                <div class="col-md-7 text-md-start small">
+                    &copy; 2026 LicitaSeguro. Desarrollado bajo los estándares WCAG 2.1 y la API de Mercado Público de Chile.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/validaciones.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+
+</html>

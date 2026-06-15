@@ -1,0 +1,111 @@
+/* --- MEJORAS VISUALES PARA LICITASEGURO --- */
+
+/* 1. Tipografía y Espaciado Moderno */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    background-color: var(--bg-light);
+}
+
+/* Colores personalizados */
+.topbar-custom {
+    background-color: #121518 !important;
+    color: #ffffff;
+    font-size: 0.85rem;
+}
+
+.navbar-gradient, .bar-footer {
+    background: linear-gradient(90deg, #1e3a8a 0%, #1e40af 50%, #312e81 100%) !important;
+}
+
+/* Mejora visual para los enlaces del nav */
+.navbar-gradient .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    transition: 0.3s;
+}
+
+.navbar-gradient .nav-link:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 8px rgba(255,255,255,0.3);
+}
+
+/* 2. Tarjetas con Estética Premium */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* 3. Tablas con Estilo Dashboard */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead {
+    background-color: var(--primary-color);
+    color: white;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+}
+
+.table tbody tr:nth-of-type(even) {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:hover {
+    background-color: #eef2f7;
+    cursor: pointer;
+}
+
+/* 4. Botones con mejor interacción */
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #34495e; /* Un tono más oscuro para el hover */
+    transform: scale(1.02);
+}
+
+/* Estilos para el Modo Alto Contraste */
+.alto-contraste-activo {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+.alto-contraste-activo .card,
+.alto-contraste-activo .table {
+    border: 2px solid #fff !important;
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+
+/* botón de contraste rojo */
+.btn-contraste-rojo {
+    background-color: #dc3545; /* Rojo Bootstrap */
+    color: white !important;
+    border: 1px solid #dc3545;
+    transition: all 0.3s ease;
+}
+
+.btn-contraste-rojo:hover {
+    background-color: #b02a37; /* Rojo más oscuro para el hover */
+    border-color: #a32833;
+    transform: scale(1.05); /* Pequeño efecto de elevación */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
