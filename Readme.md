@@ -4,6 +4,10 @@ LicitaSeguro es una aplicación web del lado del cliente (Frontend Vanilla JS) d
 
 El proyecto está construido bajo estándares de accesibilidad **WCAG 2.1** y cuenta con una arquitectura defensiva contra la volatilidad de los datos públicos.
 
+## 🔗 Demo en Vivo
+Puedes probar la aplicación en tiempo real y completamente operativa aquí:
+👉 **[Despliegue en GitHub Pages](https://estudianteipss.github.io/evaluacionfrontendExamen/)**
+
 ## 🚀 Características Clave
 
 - **Buscador Avanzado de Licitaciones:** Filtra los procesos de ChileCompra por fecha y estados dinámicos (publicadas, adjudicadas, revocadas, etc.).
