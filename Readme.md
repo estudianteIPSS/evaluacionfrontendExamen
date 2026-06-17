@@ -29,4 +29,5 @@ Puedes probar la aplicación en tiempo real y completamente operativa aquí:
 └── js/
     ├── api.js                 # Capa de conectividad HTTP, Fetch y sanitización de caracteres ASCII
     ├── ui.js                  # Controlador maestro de la interfaz, paginación local y renderizado
+    ├── Accesibilidad.js       # Controlador donde se maneja la Accesibilidad
     └── validaciones.js        # Lógica matemática del RUT y estados visuales de Bootstrap
