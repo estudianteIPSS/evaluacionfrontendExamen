@@ -4,8 +4,8 @@
  * Administra el estado global de renderizado, paginación local, filtros en tiempo real y accesibilidad.
  */
 
-let datosActuales = [];   
-let datosFiltrados = [];  
+let datosActuales = [];
+let datosFiltrados = [];
 let paginaActual = 1;
 const ITEMS_POR_PAGINA = 10;
 
@@ -56,10 +56,10 @@ function inicializarVistaLicitaciones() {
     formFiltros.addEventListener('submit', async (e) => {
         e.preventDefault();
         ocultarAlerta();
-        
+
         const contenedorResultados = document.getElementById('contenedor-resultados');
         if (contenedorResultados) contenedorResultados.classList.add('d-none');
-        
+
         const fechaValue = document.getElementById('input-fecha').value;
         const estadoValue = document.getElementById('select-estado').value;
 
@@ -67,9 +67,9 @@ function inicializarVistaLicitaciones() {
         try {
             const respuesta = await apiObtenerLicitaciones(fechaValue, estadoValue);
             datosActuales = respuesta.Listado || [];
-            datosFiltrados = [...datosActuales]; 
-            paginaActual = 1; 
-            
+            datosFiltrados = [...datosActuales];
+            paginaActual = 1;
+
             if (datosFiltrados.length > 0) {
                 renderizarTablaPaginada();
                 if (contenedorResultados) contenedorResultados.classList.remove('d-none');
@@ -90,7 +90,7 @@ function inicializarVistaLicitaciones() {
                 const codigo = (item.CodigoExterno || '').toLowerCase();
                 return nombre.includes(termino) || codigo.includes(termino);
             });
-            paginaActual = 1; 
+            paginaActual = 1;
             renderizarTablaPaginada();
         });
     }
@@ -118,10 +118,72 @@ function inicializarVistaLicitaciones() {
     }
 }
 
+async function mostrarTablaDeActivas() {
+    try {
+        // 1. Esperamos los datos de la API (Retorna tu objeto completo)
+        const data = await apiObtenerLicitacionesActivas('activas');
+        
+        const totalCantidad = data.Cantidad; // Aquí capturamos el 4653
+
+        // 2. Buscamos el elemento HTML con id="numero"
+        const numeroElemento = document.getElementById('numero');
+        if (numeroElemento && totalCantidad > 0) {
+            
+            // ¡MÁGIA!: Llamamos a la animación (durará 1.5 segundos / 1500ms)
+            animarContador(numeroElemento, totalCantidad, 1500);
+            
+        } else if (numeroElemento) {
+            numeroElemento.textContent = '0';
+        }
+
+        // 3. Seguimos con la renderización normal de tu tabla
+        licitacionesGuardadas = data.Listado || [];
+        construirTablaHTML(licitacionesGuardadas);
+
+    } catch (error) {
+        console.error("Error al cargar datos y animar contador:", error.message);
+    }
+}
+
+/**
+ * Anima un elemento numérico desde 0 hasta su valor final de forma fluida.
+ * @param {HTMLElement} elemento - El nodo HTML donde se pintará el número.
+ * @param {number} valorFinal - El número de la API (ej: 4653).
+ * @param {number} duracion - Tiempo en milisegundos que durará la animación.
+ */
+function animarContador(elemento, valorFinal, duracion = 2000) {
+    let tiempoInicio = null;
+
+    // Esta función interna se ejecutará en cada frame de la pantalla
+    function actualizarNumero(tiempoActual) {
+        if (!tiempoInicio) tiempoInicio = tiempoActual;
+        
+        // Calculamos cuánto tiempo ha pasado desde que empezó la animación
+        const tiempoTranscurrido = tiempoActual - tiempoInicio;
+        
+        // Calculamos el progreso entre 0.0 y 1.0
+        const progreso = Math.min(tiempoTranscurrido / duracion, 1);
+        
+        // Calculamos el número actual basado en el progreso
+        const valorActual = Math.floor(progreso * valorFinal);
+        
+        // Inyectamos el número formateado con puntos de miles locales (ej: 4.653)
+        elemento.textContent = valorActual.toLocaleString('es-CL');
+
+        // Si no hemos llegado al 100% del tiempo, seguimos animando en el próximo frame
+        if (progreso < 1) {
+            requestAnimationFrame(actualizarNumero);
+        }
+    }
+
+    // Arrancamos la animación
+    requestAnimationFrame(actualizarNumero);
+}
+
 function renderizarTablaPaginada() {
     const tbody = document.getElementById('tabla-licitaciones');
     if (!tbody) return;
-    tbody.innerHTML = ''; 
+    tbody.innerHTML = '';
 
     const inicio = (paginaActual - 1) * ITEMS_POR_PAGINA;
     const fin = inicio + ITEMS_POR_PAGINA;
@@ -132,10 +194,15 @@ function renderizarTablaPaginada() {
         const codigoLimpio = limpiarTexto(item.CodigoExterno);
         const nombreLimpio = limpiarTexto(item.Nombre);
         const estadoLimpio = limpiarTexto(item.CodigoEstado);
+        const fechaLimpio = item.FechaCierre
+            ? item.FechaCierre.split('T')[0].split('-').reverse().join('-')
+            : '';
+
 
         tr.innerHTML = `
             <td class="fw-medium">${codigoLimpio}</td>
             <td>${nombreLimpio}</td>
+            <td>${fechaLimpio}</td>
             <td><span class="badge bg-secondary">${estadoLimpio}</span></td>
             <td class="text-end">
                 <a href="detalle.html?codigo=${codigoLimpio}" class="btn btn-sm btn-outline-primary" aria-label="Consultar desglose del proceso ${codigoLimpio}">Ver Detalle</a>
@@ -179,7 +246,7 @@ function actualizarControlesPaginacion() {
 async function inicializarVistaDetalle() {
     const urlParams = new URLSearchParams(window.location.search);
     const codigoUrl = urlParams.get('codigo');
-    
+
     // Si no hay código en la URL o no estamos en la página de detalle, salir pacíficamente
     if (!codigoUrl || !document.getElementById('detalle-licitacion')) return;
 
@@ -209,21 +276,26 @@ function renderizarDetalleLicitacion(lic) {
     const elOrganismo = document.getElementById('detalle-organismo');
     const elRutComprador = document.getElementById('detalle-rut-comprador');
     const elMonto = document.getElementById('detalle-monto');
-    const elFechaCierre = document.getElementById('detalle-fecha-cierre');
+    const elRegion = document.getElementById('detalle-region');
+    const elMoneda = limpiarTexto(lic.Moneda);
+    const elPago = document.getElementById('detalle-pago');
+    const elContrato = document.getElementById('detalle-contrato');
 
+    if (elPago) elPago.textContent = limpiarTexto(lic.NombreResponsablePago);
+    if (elContrato) elContrato.textContent = limpiarTexto(lic.NombreResponsableContrato);
     if (elNombre) elNombre.textContent = limpiarTexto(lic.Nombre);
     if (elCodigo) elCodigo.textContent = limpiarTexto(lic.CodigoExterno);
     if (elDescripcion) elDescripcion.textContent = limpiarTexto(lic.Descripcion);
     if (elEstado) elEstado.textContent = limpiarTexto(lic.Estado);
-    if (elFechaCierre) elFechaCierre.textContent = limpiarTexto(lic.FechaCierre);
+    if (elRegion) elRegion.textContent = limpiarTexto(lic.Comprador.RegionUnidad);
 
     if (elOrganismo && lic.Comprador) elOrganismo.textContent = limpiarTexto(lic.Comprador.NombreOrganismo);
-    if (elRutComprador && lic.Comprador) elRutComprador.textContent = limpiarTexto(lic.Comprador.RutCartola);
+    if (elRutComprador && lic.Comprador) elRutComprador.textContent = limpiarTexto(lic.Comprador.RutUnidad);
 
     if (elMonto) {
         const montoNum = parseFloat(lic.MontoEstimado);
-        elMonto.textContent = !isNaN(montoNum) && montoNum > 0 
-            ? `$${montoNum.toLocaleString('es-CL')}` 
+        elMonto.textContent = !isNaN(montoNum) && montoNum > 0
+            ? `$${montoNum.toLocaleString('es-CL')} ${elMoneda}  `
             : 'Consultar bases adjuntas';
     }
 
@@ -235,7 +307,10 @@ function renderizarDetalleLicitacion(lic) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <th scope="row">${index + 1}</th>
-                <td class="fw-semibold">${limpiarTexto(item.NombreProducto)}</td>
+                <td class="fw-semibold">${limpiarTexto(item.CodigoProducto)}</td>
+                <td class="fw-semibold">${limpiarTexto(item.CodigoCategoria)}</td>
+                <td class="small text-muted">${limpiarTexto(item.Categoria)}</td>
+                <td class="small text-muted">${limpiarTexto(item.NombreProducto)}</td>
                 <td class="small text-muted">${limpiarTexto(item.Descripcion)}</td>
                 <td class="text-center fw-bold">${item.Cantidad || 0}</td>
                 <td>${limpiarTexto(item.UnidadMedida)}</td>
@@ -270,20 +345,20 @@ async function procesarBusquedaProveedor(rutFormateado) {
     ocultarAlerta();
     const moduloResultado = document.getElementById('resultado-proveedor');
     if (moduloResultado) moduloResultado.classList.add('d-none');
-    
+
     mostrarLoader();
     try {
         const data = await apiObtenerProveedor(rutFormateado);
         const empresa = data.listaEmpresas[0];
-        
+
         const elRazonSocial = document.getElementById('prov-razon-social');
         const elRut = document.getElementById('prov-rut');
         const elId = document.getElementById('prov-id');
 
         if (elRazonSocial) elRazonSocial.textContent = limpiarTexto(empresa.NombreEmpresa);
-        if (elRut) elRut.textContent = rutFormateado; 
+        if (elRut) elRut.textContent = rutFormateado;
         if (elId) elId.textContent = limpiarTexto(empresa.CodigoEmpresa);
-        
+
         if (moduloResultado) moduloResultado.classList.remove('d-none');
     } catch (error) {
         if (error.message.includes('429')) {
@@ -298,32 +373,17 @@ async function procesarBusquedaProveedor(rutFormateado) {
 
 window.procesarBusquedaProveedor = procesarBusquedaProveedor;
 
-// --- CONFIGURACIÓN DE ACCESIBILIDAD UNIVERSAL ---
-function inicializarMecanismoAccesibilidad() {
-    const btnContraste = document.getElementById('btn-alto-contraste');
-    if (!btnContraste) return;
-
-    btnContraste.addEventListener('click', () => {
-        document.body.classList.toggle('alto-contraste-activo');
-        const estadoActivo = document.body.classList.contains('alto-contraste-activo');
-        localStorage.setItem('preferencia-contraste', estadoActivo ? 'activo' : 'inactivo');
-    });
-
-    if (localStorage.getItem('preferencia-contraste') === 'activo') {
-        document.body.classList.add('alto-contraste-activo');
-    }
-}
 
 // --- HILO PRINCIPAL DE INICIALIZACIÓN ---
 document.addEventListener('DOMContentLoaded', () => {
-    inicializarMecanismoAccesibilidad();
     inicializarVistaLicitaciones();
+    mostrarTablaDeActivas()
     inicializarVistaDetalle(); // <-- ACTIVADO: Carga el módulo de detalles dinámicamente si aplica
-    
+
     // Verificación de parámetros URL de redirección
     const urlParams = new URLSearchParams(window.location.search);
     const rutUrl = urlParams.get('rut');
-    
+
     if (rutUrl) {
         const inputRut = document.getElementById('input-rut');
         if (inputRut) {
@@ -332,4 +392,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         window.procesarBusquedaProveedor(rutUrl);
     }
+    
 });

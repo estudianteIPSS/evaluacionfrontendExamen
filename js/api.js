@@ -92,3 +92,22 @@ async function apiObtenerProveedor(rut) {
     }
     return data;
 }
+
+async function apiObtenerLicitacionesActivas(estado) {
+    // 1. Eliminamos el validador de fecha. El estado sigue siendo obligatorio.
+    if (!estado) throw new Error('Criterio Inválido: El estado es requerido.');
+        
+    // 2. Construimos el link perfecto (sin el parámetro &fecha)
+    const url = `${BASE_URL}/licitaciones.json?estado=${estado}&ticket=${API_TICKET}`;
+    
+    // 3. Viajamos a internet
+    const data = await fetchConManejoErrores(url);
+    
+    // 4. Validamos que la API haya respondido algo útil antes de retornar
+    if (!data) {
+        throw new Error('Error de conexión: No se recibieron datos de la API.');
+    }
+    
+    // Retornamos el objeto completo (que adentro trae .Cantidad y .Listado)
+    return data;
+}
