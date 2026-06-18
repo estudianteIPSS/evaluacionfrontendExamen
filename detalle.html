@@ -35,8 +35,8 @@
                 <i class="fas fa-adjust"></i>
             </button>
             <div class="dropdown">
-                <button class="btn btn-sm btn-contraste-rojo py-0 px-2 shadow-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">
+                <button class="btn btn-sm btn-contraste-rojo py-0 px-2 shadow-sm dropdown-toggle" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-universal-access"></i>
                     <span>Accesibilidad</span>
                 </button>
@@ -104,43 +104,78 @@
                 <div>
                     <span class="badge bg-primary mb-2 fs-6" id="detalle-estado" tabindex="0">Estado</span>
                     <h1 class="h2 fw-bold" id="detalle-nombre" tabindex="0">Nombre de la Licitación</h1>
-                    <p class="mb-2">Código Externo: <strong id="detalle-codigo"></strong></p>
+                    <div class="p-2 rounded border mt-2 mb-4">
+                        <p class="mb-1 small">Código Externo: <strong id="detalle-codigo"></strong></p>
+                        <p class="mb-1 small">Descripcion: <strong id="detalle-descripcion"></strong></p>
+                        <p class="mb-1 small">Tipo de Licitacion: <strong id="detalle-tipo-licitacion"></strong></p>
+                        <p class="mb-1 small">Tipo de Convocatoria: <strong id="detalle-tipo-convocatoria"></strong></p>
+                        <p class="mb-1 small">Etapas del Proceso de Apertura: <strong
+                                id="detalle-etapa-apertura"></strong></p>
+                        <p class="mb-1 small">Toma de Razon por Contraloria: <strong id="detalle-toma-razon"></strong>
+                        </p>
 
-                    <div class="p-2 rounded border mt-2">
-                        <p class="mb-1 small">🏢 <strong>Organismo Comprador:</strong> <span
-                                id="detalle-organismo" class="fw-bold">--</span> (<span id="detalle-rut-comprador">--</span>)</p>
-                        <p class="mb-0 small">📅 <strong>Region del Comprador:</strong> <span id="detalle-region"
-                                class="fw-bold">--</span></p>
                     </div>
 
-                </div>
+                    <span class="badge bg-primary mb-2 fs-6" tabindex="0">Organismo Demandante</span>
+                    <h1 class="h2 fw-bold" id="detalle-organismo" tabindex="0">Razon Social</h1>
+                    <div class="p-2 rounded border mt-2 mb-4">
+                        <p class="mb-1 small">Unidad de Compra: <strong id="detalle-nombre-unidad"></strong></p>
+                        <p class="mb-1 small">RUT: <strong id="detalle-rut-unidad"></strong></p>
+                        <p class="mb-1 small">Direccion: <strong id="detalle-direccion-unidad"></strong></p>
+                        <p class="mb-1 small">Comuna: <strong id="detalle-comuna-unidad"></strong></p>
+                        <p class="mb-1 small">Region en la cual se genero la Licitacion: <strong
+                                id="detalle-region-unidad"></strong></p>
+                    </div>
 
-                <div class=" rounded border shadow-sm text-center mt-2 mt-md-0" style="min-width: 220px;">
-                    <span class=" d-block small fw-bold" id="label-monto">Monto Financiero</span>
-                    <h3 class=" fw-bold mb-1" id="detalle-monto">$-</h3>
-                    <span class="badge bg-light text-dark border d-block my-2" id="detalle-rut-proveedor">RUT
-                        Proveedor</span>
-                    <button id="btn-ver-proveedor" class="btn btn-sm  w-100 d-none" tabindex="0">Ver Ficha
-                        Empresa</button>
-                </div>
+                    <div class="p-2 rounded border mt-2 mb-4">
+                        <p class="mb-1 small">Reclamos recibidos por incumplir plazo de pago: <strong
+                                id="detalle-reclamos"></strong></p>
+                        <p class="rounded border bg-light text-dark mb-1 small">Este número indica los reclamos
+                            recibidos por esta institución. Recuerde interpretar esta información considerando la
+                            cantidad de licitaciones y órdenes de compra que esta institución genera en el Mercado
+                            Público.</p>
 
-                <div class="p-2 rounded border mt-2">
-                    <p class="mb-1 small"> <strong>Responsable del Pago:</strong> <span
-                            id="detalle-pago">--</span></p>
-                    <p class="mb-0 small"> <strong>Responsable del Contrato:</strong> <span 
-                        id="detalle-contrato">--</span></p>
-                </div>
+                    </div>
 
+                    <p class="h3 fw-bold">Etapas y Plazos</p>
+                    <div class="p-2 rounded border mt-2 mb-4">
+                        <p class="mb-1 small">Fecha de Cierre de Recepcion de la Oferta: <strong
+                                id="detalle-fecha-cierre"></strong></p>
+                        <p class="mb-1 small">Fecha de Publicacion: <strong id="detalle-fecha-creacion"></strong></p>
+                        <p class="mb-1 small">Fecha Inicio de Preguntas: <strong id="detalle-fecha-inicio"></strong>
+                        </p>
+                        <p class="mb-1 small">Fecha Final de Preguntas: <strong id="detalle-fecha-final"></strong></p>
+                        <p class="mb-1 small">Fecha Publicacion de Respuestas: <strong id="detalle-fecha-pub"></strong>
+                        </p>
+                        <p class="mb-1 small">Fecha de Acto de Apertura Tecnica: <strong
+                                id="detalle-fecha-tecnica"></strong></p>
+                        <p class="mb-1 small">Fecha de Acto de Apertura Economica: <strong
+                                id="detalle-fecha-economica"></strong></p>
+                        <p class="mb-1 small">Fecha de Adjudicacion: <strong id="detalle-fecha-adjudicacion"></strong>
+                        </p>
+                    </div>
+                    
+                    <p class="h3 fw-bold">Montos y Duracion de Contrato</p>
+                    <div class="p-2 rounded border mt-2 mb-4">
+                        <p class="mb-1 small">Estimacion en base a: <strong id="detalle-estimacion-base"></strong></p>
+                        <p class="mb-1 small">Fuente de Financiamiento: <strong id="detalle-fuente-financiamiento">No Especifica</strong></p>
+                        <p class="mb-1 small">Monto Total Estimado: <strong id="detalle-monto-estimado"></strong></p>
+                        <p class="mb-1 small">Nombre Responsable del Pago: <strong id="detalle-responsable-pago"></strong>
+                        </p>
+                        <p class="mb-1 small">Contrato con Renovacion: <strong id="detalle-renovacion-contrato"></strong></p>
+                        <p class="mb-1 small">Nombre Responsable del Contrato: <strong
+                                id="detalle-responsable-contrato"></strong></p>
+                    </div>
             </header>
 
             <div class="row g-4">
                 <div class="col-12">
-                    <h2 class="h5 fw-bold text-secondary mb-3" tabindex="0">Líneas de Bienes o Servicios Solicitados
-                    </h2>
+                    <p class="h3 fw-bold mb-4" tabindex="0">Productos o Servicios
+                    </p>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped align-middle"
+                        <table class="rounded table table-hover align-middle mb-0"
                             aria-label="Lista de productos incluidos en la licitación">
-                            <thead class="table-light">
+                            <thead class="table-dark text-center">
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Codigo Producto</th>

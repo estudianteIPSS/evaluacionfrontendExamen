@@ -122,16 +122,16 @@ async function mostrarTablaDeActivas() {
     try {
         // 1. Esperamos los datos de la API (Retorna tu objeto completo)
         const data = await apiObtenerLicitacionesActivas('activas');
-        
+
         const totalCantidad = data.Cantidad; // Aquí capturamos el 4653
 
         // 2. Buscamos el elemento HTML con id="numero"
         const numeroElemento = document.getElementById('numero');
         if (numeroElemento && totalCantidad > 0) {
-            
+
             // ¡MÁGIA!: Llamamos a la animación (durará 1.5 segundos / 1500ms)
             animarContador(numeroElemento, totalCantidad, 1500);
-            
+
         } else if (numeroElemento) {
             numeroElemento.textContent = '0';
         }
@@ -143,41 +143,6 @@ async function mostrarTablaDeActivas() {
     } catch (error) {
         console.error("Error al cargar datos y animar contador:", error.message);
     }
-}
-
-/**
- * Anima un elemento numérico desde 0 hasta su valor final de forma fluida.
- * @param {HTMLElement} elemento - El nodo HTML donde se pintará el número.
- * @param {number} valorFinal - El número de la API (ej: 4653).
- * @param {number} duracion - Tiempo en milisegundos que durará la animación.
- */
-function animarContador(elemento, valorFinal, duracion = 2000) {
-    let tiempoInicio = null;
-
-    // Esta función interna se ejecutará en cada frame de la pantalla
-    function actualizarNumero(tiempoActual) {
-        if (!tiempoInicio) tiempoInicio = tiempoActual;
-        
-        // Calculamos cuánto tiempo ha pasado desde que empezó la animación
-        const tiempoTranscurrido = tiempoActual - tiempoInicio;
-        
-        // Calculamos el progreso entre 0.0 y 1.0
-        const progreso = Math.min(tiempoTranscurrido / duracion, 1);
-        
-        // Calculamos el número actual basado en el progreso
-        const valorActual = Math.floor(progreso * valorFinal);
-        
-        // Inyectamos el número formateado con puntos de miles locales (ej: 4.653)
-        elemento.textContent = valorActual.toLocaleString('es-CL');
-
-        // Si no hemos llegado al 100% del tiempo, seguimos animando en el próximo frame
-        if (progreso < 1) {
-            requestAnimationFrame(actualizarNumero);
-        }
-    }
-
-    // Arrancamos la animación
-    requestAnimationFrame(actualizarNumero);
 }
 
 function renderizarTablaPaginada() {
@@ -193,17 +158,15 @@ function renderizarTablaPaginada() {
         const tr = document.createElement('tr');
         const codigoLimpio = limpiarTexto(item.CodigoExterno);
         const nombreLimpio = limpiarTexto(item.Nombre);
-        const estadoLimpio = limpiarTexto(item.CodigoEstado);
-        const fechaLimpio = item.FechaCierre
-            ? item.FechaCierre.split('T')[0].split('-').reverse().join('-')
-            : '';
+        const badgeEstado = obtenerBadgeEstado(item.CodigoEstado);
 
+        const fechaLimpio = formatearFecha(item.FechaCierre);
 
         tr.innerHTML = `
             <td class="fw-medium">${codigoLimpio}</td>
             <td>${nombreLimpio}</td>
-            <td>${fechaLimpio}</td>
-            <td><span class="badge bg-secondary">${estadoLimpio}</span></td>
+            <td class="text-center" >${fechaLimpio}</td>
+            <td>${badgeEstado}</td>
             <td class="text-end">
                 <a href="detalle.html?codigo=${codigoLimpio}" class="btn btn-sm btn-outline-primary" aria-label="Consultar desglose del proceso ${codigoLimpio}">Ver Detalle</a>
             </td>
@@ -273,29 +236,127 @@ function renderizarDetalleLicitacion(lic) {
     const elCodigo = document.getElementById('detalle-codigo');
     const elDescripcion = document.getElementById('detalle-descripcion');
     const elEstado = document.getElementById('detalle-estado');
-    const elOrganismo = document.getElementById('detalle-organismo');
-    const elRutComprador = document.getElementById('detalle-rut-comprador');
-    const elMonto = document.getElementById('detalle-monto');
-    const elRegion = document.getElementById('detalle-region');
-    const elMoneda = limpiarTexto(lic.Moneda);
-    const elPago = document.getElementById('detalle-pago');
-    const elContrato = document.getElementById('detalle-contrato');
+    const tipoLicitacion = document.getElementById('detalle-tipo-licitacion');
+    const tipoConvocatoria = document.getElementById('detalle-tipo-convocatoria');
+    const numeroEtapas = document.getElementById('detalle-etapa-apertura');
+    const tomaRazon = document.getElementById('detalle-toma-razon');
 
-    if (elPago) elPago.textContent = limpiarTexto(lic.NombreResponsablePago);
-    if (elContrato) elContrato.textContent = limpiarTexto(lic.NombreResponsableContrato);
+    const tiposLicitacion = {
+        L1: "Licitación Pública Menor a 100 UTM",
+        LE: "Licitación Pública igual o superior a 100 UTM e inferior a 1.000 UTM",
+        LP: "Licitación Pública igual o superior a 1.000 UTM e inferior a 2.000 UTM",
+        LQ: "Licitación Pública igual o superior a 2.000 UTM e inferior a 5.000 UTM",
+        LR: "Licitación Pública igual o superior a 5.000 UTM",
+        E2: "Licitación Privada Menor a 100 UTM",
+        CO: "Licitación Privada igual o superior a 100 UTM e inferior a 1.000 UTM",
+        B2: "Licitación Privada igual o superior a 1.000 UTM e inferior a 2.000 UTM",
+        H2: "Licitación Privada igual o superior a 2.000 UTM e inferior a 5.000 UTM",
+        I2: "Licitación Privada Mayor a 5.000 UTM",
+        LS: "Licitación Pública Servicios personales especializados"
+    };
+
+    const tiposConvocatoria = {
+        1: "Abierto",
+        2: "Cerrado"
+    };
+
+    const etapas = {
+        1: "1 Etapa",
+        2: "2 Etapas"
+    };
+
+    const tomaRazonMap = {
+        1: "Si requiere Toma de Razón por Contraloría",
+        0: "No requiere Toma de Razón por Contraloría"
+    };
+
+    if (tipoLicitacion) {
+        const tipo = lic.CodigoTipo === 1 ? "Publica" : "Privada";
+        tipoLicitacion.textContent = `${tipo} - ${tiposLicitacion[lic.Tipo] ?? "No especificado"}`;
+    }
+
+    if (tipoConvocatoria) {
+        tipoConvocatoria.textContent =
+            tiposConvocatoria[lic.TipoConvocatoria] ?? "No especificado";
+    }
+
+    if (numeroEtapas) {
+        numeroEtapas.textContent =
+            etapas[lic.Etapas] ?? "No especificado";
+    }
+
+    if (tomaRazon) {
+        tomaRazon.textContent =
+            tomaRazonMap[lic.TomaRazon] ?? "No especificado";
+    }
+
     if (elNombre) elNombre.textContent = limpiarTexto(lic.Nombre);
     if (elCodigo) elCodigo.textContent = limpiarTexto(lic.CodigoExterno);
     if (elDescripcion) elDescripcion.textContent = limpiarTexto(lic.Descripcion);
     if (elEstado) elEstado.textContent = limpiarTexto(lic.Estado);
-    if (elRegion) elRegion.textContent = limpiarTexto(lic.Comprador.RegionUnidad);
 
-    if (elOrganismo && lic.Comprador) elOrganismo.textContent = limpiarTexto(lic.Comprador.NombreOrganismo);
-    if (elRutComprador && lic.Comprador) elRutComprador.textContent = limpiarTexto(lic.Comprador.RutUnidad);
+    const elOrganismo = document.getElementById('detalle-organismo');
+    const elRutComprador = document.getElementById('detalle-rut-unidad');
+    const regionUnidad = document.getElementById('detalle-region-unidad');
+    const nombreUnidad = document.getElementById('detalle-nombre-unidad');
+    const direccionUnidad = document.getElementById('detalle-direccion-unidad');
+    const comunaUnidad = document.getElementById('detalle-comuna-unidad');
+    const cantidadReclamos = document.getElementById('detalle-reclamos');
+
+    if (elOrganismo) elOrganismo.textContent = limpiarTexto(lic.Comprador.NombreOrganismo);
+    if (elRutComprador) elRutComprador.textContent = limpiarTexto(lic.Comprador.RutUnidad);
+    if (nombreUnidad) nombreUnidad.textContent = limpiarTexto(lic.Comprador.NombreUnidad);
+    if (direccionUnidad) direccionUnidad.textContent = limpiarTexto(lic.Comprador.DireccionUnidad);
+    if (comunaUnidad) comunaUnidad.textContent = limpiarTexto(lic.Comprador.ComunaUnidad);
+    if (regionUnidad) regionUnidad.textContent = limpiarTexto(lic.Comprador.RegionUnidad);
+    if (cantidadReclamos) cantidadReclamos.textContent = lic.CantidadReclamos;
+
+    const fechaCierre = document.getElementById('detalle-fecha-cierre');
+    const fechaPublicacion = document.getElementById('detalle-fecha-creacion');
+    const fechaInicio = document.getElementById('detalle-fecha-inicio');
+    const fechaFinal = document.getElementById('detalle-fecha-final');
+    const fechaPub = document.getElementById('detalle-fecha-pub');
+    const fechaTecnica = document.getElementById('detalle-fecha-tecnica');
+    const fechaEconomica = document.getElementById('detalle-fecha-economica');
+    const fechaAdjudicacion = document.getElementById('detalle-fecha-adjudicacion');
+
+    if (fechaCierre) fechaCierre.textContent = formatearFecha(lic.Fechas.FechaCierre);
+    if (fechaPublicacion) fechaPublicacion.textContent = formatearFecha(lic.Fechas.FechaPublicacion);
+    if (fechaInicio) fechaInicio.textContent = formatearFecha(lic.Fechas.FechaInicio);
+    if (fechaFinal) fechaFinal.textContent = formatearFecha(lic.Fechas.FechaFinal);
+    if (fechaPub) fechaPub.textContent = formatearFecha(lic.Fechas.FechaPubRespuestas);
+    if (fechaTecnica) fechaTecnica.textContent = formatearFecha(lic.Fechas.FechaActoAperturaTecnica);
+    if (fechaEconomica) fechaEconomica.textContent = formatearFecha(lic.Fechas.FechaActoAperturaEconomica);
+    if (fechaAdjudicacion) fechaAdjudicacion.textContent = formatearFecha(lic.Fechas.FechaAdjudicacion);
+
+    const estimacionBase = document.getElementById('detalle-estimacion-base')
+    const fuenteFinanciamiento = document.getElementById('detalle-fuente-financiamiento')
+    const elMonto = document.getElementById('detalle-monto-estimado');
+    const renovacionContrato = document.getElementById('detalle-renovacion-contrato')
+    const responsablePago = document.getElementById('detalle-responsable-pago');
+    const responsableContrato = document.getElementById('detalle-responsable-contrato');
+
+    const fuentesFinanciamiento = {
+        1: "Presupuesto Disponible",
+        2: "Precio Referencial",
+        3: "Monto no es posible de estimar"
+    };
+
+    const contratoRenovable = {
+        0: "No",
+        1: "Si"
+    }
+
+    if (estimacionBase) estimacionBase.textContent = fuentesFinanciamiento[lic.Estimacion];
+    if (fuenteFinanciamiento) fuenteFinanciamiento.textContent = lic.FuenteFinanciamiento || "No Especifica";
+    if (renovacionContrato) renovacionContrato.textContent = contratoRenovable[lic.EsRenovable] || "No Especifica";
+    if (responsablePago) responsablePago.textContent = limpiarTexto(lic.NombreResponsablePago);
+    if (responsableContrato) responsableContrato.textContent = limpiarTexto(lic.NombreResponsableContrato);
 
     if (elMonto) {
         const montoNum = parseFloat(lic.MontoEstimado);
         elMonto.textContent = !isNaN(montoNum) && montoNum > 0
-            ? `$${montoNum.toLocaleString('es-CL')} ${elMoneda}  `
+            ? `$${montoNum.toLocaleString('es-CL')} ${limpiarTexto(lic.Moneda)}  `
             : 'Consultar bases adjuntas';
     }
 
@@ -303,10 +364,10 @@ function renderizarDetalleLicitacion(lic) {
     const tbodyItems = document.getElementById('tabla-detalle-items');
     if (tbodyItems && lic.Items && lic.Items.Listado) {
         tbodyItems.innerHTML = '';
-        lic.Items.Listado.forEach((item, index) => {
+        lic.Items.Listado.forEach((item) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <th scope="row">${index + 1}</th>
+                <th scope="row">${item.Correlativo}</th>
                 <td class="fw-semibold">${limpiarTexto(item.CodigoProducto)}</td>
                 <td class="fw-semibold">${limpiarTexto(item.CodigoCategoria)}</td>
                 <td class="small text-muted">${limpiarTexto(item.Categoria)}</td>
@@ -317,22 +378,6 @@ function renderizarDetalleLicitacion(lic) {
             `;
             tbodyItems.appendChild(tr);
         });
-    }
-
-    // Procesar información sobre adjudicaciones si existen
-    const elProvRut = document.getElementById('detalle-rut-proveedor');
-    const btnProv = document.getElementById('btn-ver-proveedor');
-
-    if (lic.Items && lic.Items.Listado && lic.Items.Listado[0] && lic.Items.Listado[0].Adjudicacion) {
-        const adj = lic.Items.Listado[0].Adjudicacion;
-        if (elProvRut) elProvRut.textContent = `RUT Adjudicado: ${limpiarTexto(adj.RutProveedor)}`;
-        if (btnProv && adj.RutProveedor) {
-            btnProv.classList.remove('d-none');
-            btnProv.onclick = () => { window.location.href = `proveedores.html?rut=${adj.RutProveedor}`; };
-        }
-    } else {
-        if (elProvRut) elProvRut.textContent = "Proceso sin proveedor adjudicado registrado.";
-        if (btnProv) btnProv.classList.add('d-none');
     }
 
     // Hacer visible el contenedor completo una vez poblado
@@ -392,5 +437,72 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         window.procesarBusquedaProveedor(rutUrl);
     }
-    
+
 });
+
+/**
+ * Anima un elemento numérico desde 0 hasta su valor final de forma fluida.
+ * @param {HTMLElement} elemento - El nodo HTML donde se pintará el número.
+ * @param {number} valorFinal - El número de la API (ej: 4653).
+ * @param {number} duracion - Tiempo en milisegundos que durará la animación.
+ */
+function animarContador(elemento, valorFinal, duracion = 2000) {
+    let tiempoInicio = null;
+
+    // Esta función interna se ejecutará en cada frame de la pantalla
+    function actualizarNumero(tiempoActual) {
+        if (!tiempoInicio) tiempoInicio = tiempoActual;
+
+        // Calculamos cuánto tiempo ha pasado desde que empezó la animación
+        const tiempoTranscurrido = tiempoActual - tiempoInicio;
+
+        // Calculamos el progreso entre 0.0 y 1.0
+        const progreso = Math.min(tiempoTranscurrido / duracion, 1);
+
+        // Calculamos el número actual basado en el progreso
+        const valorActual = Math.floor(progreso * valorFinal);
+
+        // Inyectamos el número formateado con puntos de miles locales (ej: 4.653)
+        elemento.textContent = valorActual.toLocaleString('es-CL');
+
+        // Si no hemos llegado al 100% del tiempo, seguimos animando en el próximo frame
+        if (progreso < 1) {
+            requestAnimationFrame(actualizarNumero);
+        }
+    }
+
+    // Arrancamos la animación
+    requestAnimationFrame(actualizarNumero);
+}
+
+const estadosLicitacion = {
+    5: { clase: "bg-success", icono: "fa-bullhorn", texto: "Publicada" },
+    6: { clase: "bg-secondary", icono: "fa-lock", texto: "Cerrada" },
+    7: { clase: "bg-dark", icono: "fa-ban", texto: "Desierta" },
+    8: { clase: "bg-primary", icono: "fa-gavel", texto: "Adjudicada" },
+    15: { clase: "bg-danger", icono: "fa-times-circle", texto: "Revocada" },
+    19: { clase: "bg-warning text-dark", icono: "fa-exclamation-triangle", texto: "Suspendida" }
+};
+
+function obtenerBadgeEstado(codigo) {
+    const estado = estadosLicitacion[codigo];
+
+    if (!estado) {
+        return `<span class="badge bg-light text-dark">Código ${codigo}</span>`;
+    }
+
+    return `
+        <span class="badge ${estado.clase}">
+            <i class="fas ${estado.icono} me-1"></i>
+            ${estado.texto}
+        </span>
+    `;
+}
+
+function formatearFecha(fechaIso) {
+    const [fecha, horas] = fechaIso.split('T');
+    const fechaFormateada = fecha.split('-').reverse().join('-');
+    const [hora, minuto] = horas.split(':');
+
+    return `${fechaFormateada} ${hora}:${minuto}`;
+}

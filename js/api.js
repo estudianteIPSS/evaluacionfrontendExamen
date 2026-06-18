@@ -6,7 +6,7 @@
 
 const API_TICKET = 'AC3A098B-4CD0-41AF-81A5-41284248419B';
 const BASE_URL = 'https://api.mercadopublico.cl/servicios/v1/publico';
-const PROV_URL = 'https://api.mercadopublico.cl/servicios/v1/Publico/Empresas/BuscarProveedor';
+const PROV_URL = `${BASE_URL}/Empresas/BuscarProveedor`;
 
 function limpiarTexto(texto) {
     if (texto === null || texto === undefined || texto.toString().trim() === '') {
