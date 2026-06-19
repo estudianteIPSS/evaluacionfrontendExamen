@@ -48,6 +48,7 @@ function ocultarAlerta() {
     }
 }
 
+
 // --- MÓDULO VISUAL: LISTADO DE LICITACIONES ---
 function inicializarVistaLicitaciones() {
     const formFiltros = document.getElementById('form-filtros');
@@ -221,13 +222,72 @@ async function inicializarVistaDetalle() {
         if (respuesta && respuesta.Listado && respuesta.Listado.length > 0) {
             renderizarDetalleLicitacion(respuesta.Listado[0]);
         } else {
-            mostrarAlerta("No se encontró información estructurada para esta licitación.", "warning");
+            // Caso: Respuesta exitosa pero vacía (Tarea 6)
+            mostrarAlerta("No se encontró información estructurada para esta licitación. Volviendo al buscador...", "warning");
+            
+            setTimeout(() => {
+                window.location.href = 'licitaciones.html';
+            }, 3500);
         }
     } catch (error) {
-        mostrarAlerta(error.message, "danger");
+        // Caso: Captura el Error 500 controlado o caídas de servidor (Tarea 6)
+        // Concatenamos una frase amigable para avisar del retorno automático
+        mostrarAlerta(`${error.message} Será redirigido al buscador automáticamente...`, "danger");
+        
+        // Esperamos 3000 milisegundos (3 segundos) para permitir la lectura del feedback antes de la redirección
+        setTimeout(() => {
+            window.location.href = 'licitaciones.html';
+        }, 3000);
     } finally {
         ocultarLoader();
     }
+}
+
+/**
+ * Captura el código introducido por el usuario y lo redirige
+ * a la vista de detalles tras aplicar validaciones robustas en el cliente.
+ */
+function procesarBusquedaDirectaPorCodigo() {
+    const input = document.getElementById('input-codigo-directo');
+    const errorDiv = document.getElementById('error-codigo-directo');
+    if (!input) return;
+
+    // Sanitizamos la entrada eliminando espacios en los extremos
+    const codigo = input.value.trim();
+
+    // --- CONTROL DE ESTADO 1: Campo estrictamente vacío (Indicador 2.1.2) ---
+    if (codigo === '') {
+        input.classList.add('is-invalid');
+        if (errorDiv) {
+            // Inyectamos un mensaje detallado para este caso específico (Tarea 3)
+            errorDiv.textContent = 'El código de licitación es obligatorio para realizar la búsqueda.';
+            errorDiv.classList.remove('d-none');
+        }
+        return;
+    }
+
+    // --- CONTROL DE ESTADO 2: Validación de longitud mínima o formato ---
+    // Las licitaciones de Mercado Público suelen tener estructuras definidas (ej: 4501-122-L126). 
+    // Como mínimo, un código menor a 3 caracteres no será válido.
+    if (codigo.length < 3) {
+        input.classList.add('is-invalid');
+        if (errorDiv) {
+            // Mensaje de error personalizado para el segundo caso (Tarea 3)
+            errorDiv.textContent = 'El código ingresado es demasiado corto para ser una licitación válida.';
+            errorDiv.classList.remove('d-none');
+        }
+        return;
+    }
+
+    // Si supera los filtros del cliente, limpiamos todos los estilos de error anteriores
+    input.classList.remove('is-invalid');
+    if (errorDiv) {
+        errorDiv.textContent = '';
+        errorDiv.classList.add('d-none');
+    }
+
+    // Redirección inteligente hacia la vista de detalles reutilizando la lógica del sistema
+    window.location.href = `detalle.html?codigo=${encodeURIComponent(codigo)}`;
 }
 
 function renderizarDetalleLicitacion(lic) {
@@ -357,7 +417,7 @@ function renderizarDetalleLicitacion(lic) {
         const montoNum = parseFloat(lic.MontoEstimado);
         elMonto.textContent = !isNaN(montoNum) && montoNum > 0
             ? `$${montoNum.toLocaleString('es-CL')} ${limpiarTexto(lic.Moneda)}  `
-            : 'Consultar bases adjuntas';
+            : 'Monto no especificado';
     }
 
     // Renderizar la tabla interna de ítems requeridos
@@ -370,9 +430,9 @@ function renderizarDetalleLicitacion(lic) {
                 <th scope="row">${item.Correlativo}</th>
                 <td class="fw-semibold">${limpiarTexto(item.CodigoProducto)}</td>
                 <td class="fw-semibold">${limpiarTexto(item.CodigoCategoria)}</td>
-                <td class="small text-muted">${limpiarTexto(item.Categoria)}</td>
-                <td class="small text-muted">${limpiarTexto(item.NombreProducto)}</td>
-                <td class="small text-muted">${limpiarTexto(item.Descripcion)}</td>
+                <td class="small">${limpiarTexto(item.Categoria)}</td>
+                <td class="small">${limpiarTexto(item.NombreProducto)}</td>
+                <td class="small">${limpiarTexto(item.Descripcion)}</td>
                 <td class="text-center fw-bold">${item.Cantidad || 0}</td>
                 <td>${limpiarTexto(item.UnidadMedida)}</td>
             `;
@@ -424,6 +484,13 @@ document.addEventListener('DOMContentLoaded', () => {
     inicializarVistaLicitaciones();
     mostrarTablaDeActivas()
     inicializarVistaDetalle(); // <-- ACTIVADO: Carga el módulo de detalles dinámicamente si aplica
+
+
+    // Escuchador para el botón de búsqueda directa
+    const btnDirecto = document.getElementById('btn-buscar-directo');
+    if (btnDirecto) {
+        btnDirecto.addEventListener('click', procesarBusquedaDirectaPorCodigo);
+    }
 
     // Verificación de parámetros URL de redirección
     const urlParams = new URLSearchParams(window.location.search);

@@ -31,6 +31,10 @@ async function fetchConManejoErrores(url) {
         if (respuesta.status === 429) {
             throw new Error('Error 429: Demasiadas solicitudes simultáneas. El servicio de ChileCompra está saturado.');
         }
+        // --- NUEVA VALIDACIÓN PARA EL EXAMEN (Tarea 6) ---
+        if (respuesta.status === 500) {
+            throw new Error('Error 500: La plataforma de Mercado Público no pudo procesar la solicitud. Esto ocurre si el dato ingresado es inválido o si el servidor gubernamental presenta intermitencias.');
+        }
         if (!respuesta.ok) {
             throw new Error(`Error HTTP: ${respuesta.status} - ${respuesta.statusText}`);
         }

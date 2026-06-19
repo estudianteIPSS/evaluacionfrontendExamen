@@ -102,78 +102,83 @@
         <article id="detalle-licitacion" class="card shadow-sm border-0 p-4 d-none">
             <header class="border-bottom pb-3 mb-4 d-flex justify-content-between align-items-start flex-wrap">
                 <div>
-                    <span class="badge bg-primary mb-2 fs-6" id="detalle-estado" tabindex="0">Estado</span>
-                    <h1 class="h2 fw-bold" id="detalle-nombre" tabindex="0">Nombre de la Licitación</h1>
-                    <div class="p-2 rounded border mt-2 mb-4">
-                        <p class="mb-1 small">Código Externo: <strong id="detalle-codigo"></strong></p>
-                        <p class="mb-1 small">Descripcion: <strong id="detalle-descripcion"></strong></p>
-                        <p class="mb-1 small">Tipo de Licitacion: <strong id="detalle-tipo-licitacion"></strong></p>
-                        <p class="mb-1 small">Tipo de Convocatoria: <strong id="detalle-tipo-convocatoria"></strong></p>
-                        <p class="mb-1 small">Etapas del Proceso de Apertura: <strong
-                                id="detalle-etapa-apertura"></strong></p>
-                        <p class="mb-1 small">Toma de Razon por Contraloria: <strong id="detalle-toma-razon"></strong>
-                        </p>
+                    <span class="badge bg-primary mb-4 fs-6" id="detalle-estado" tabindex="0">Estado</span> <br>
+                    <span class="badge bg-dark text-white border border-white fs-3 mb-3">Características de la licitación</span> <br>
+                    <span class="badge bg-success mb-2 fs-6" tabindex="0">Nombre de la Licitacion</span>
+                    <h1 class="fw-bold" id="detalle-nombre" tabindex="0">Nombre</h1>
 
+                    <div class="p-2 rounded border mt-2 mb-4">
+                        <p class="mb-1 ">Código Externo: <strong id="detalle-codigo"></strong></p>
+                        <p class="mb-1 ">Descripcion: <strong id="detalle-descripcion"></strong></p>
+                        <p class="mb-1 ">Tipo de Licitacion: <strong id="detalle-tipo-licitacion"></strong></p>
+                        <p class="mb-1 ">Tipo de Convocatoria: <strong id="detalle-tipo-convocatoria"></strong></p>
+                        <p class="mb-1 ">Etapas del Proceso de Apertura: <strong id="detalle-etapa-apertura"></strong>
+                        </p>
+                        <p class="mb-1 ">Toma de Razon por Contraloria: <strong id="detalle-toma-razon"></strong>
+                        </p>
                     </div>
 
-                    <span class="badge bg-primary mb-2 fs-6" tabindex="0">Organismo Demandante</span>
-                    <h1 class="h2 fw-bold" id="detalle-organismo" tabindex="0">Razon Social</h1>
+                    <span class="badge bg-success mb-2 fs-6" tabindex="0">Responsable de la Licitacion</span>
+                    <h1 class="fw-bold" id="detalle-organismo" tabindex="0">Nombre Organismo</h1>
+
                     <div class="p-2 rounded border mt-2 mb-4">
-                        <p class="mb-1 small">Unidad de Compra: <strong id="detalle-nombre-unidad"></strong></p>
-                        <p class="mb-1 small">RUT: <strong id="detalle-rut-unidad"></strong></p>
-                        <p class="mb-1 small">Direccion: <strong id="detalle-direccion-unidad"></strong></p>
-                        <p class="mb-1 small">Comuna: <strong id="detalle-comuna-unidad"></strong></p>
-                        <p class="mb-1 small">Region en la cual se genero la Licitacion: <strong
+                        <p class="mb-1 ">Unidad de Compra: <strong id="detalle-nombre-unidad"></strong></p>
+                        <p class="mb-1 ">RUT: <strong id="detalle-rut-unidad"></strong></p>
+                        <p class="mb-1 ">Direccion: <strong id="detalle-direccion-unidad"></strong></p>
+                        <p class="mb-1 ">Comuna: <strong id="detalle-comuna-unidad"></strong></p>
+                        <p class="mb-1 ">Region en la cual se genero la Licitacion: <strong
                                 id="detalle-region-unidad"></strong></p>
                     </div>
 
-                    <div class="p-2 rounded border mt-2 mb-4">
-                        <p class="mb-1 small">Reclamos recibidos por incumplir plazo de pago: <strong
-                                id="detalle-reclamos"></strong></p>
-                        <p class="rounded border bg-light text-dark mb-1 small">Este número indica los reclamos
+                    <span class="badge bg-danger mb-2 fs-6" tabindex="0">Reclamos recibidos por incumplir plazo de pago:</span>
+                    <h1 class="fw-bold" id="detalle-reclamos" tabindex="0">Numero de Reclamos</h1>
+
+                    <div class="p-2 rounded border bg-light mt-2 mb-4">
+                        <p class=" text-dark mb-1 ">Este número indica los reclamos
                             recibidos por esta institución. Recuerde interpretar esta información considerando la
                             cantidad de licitaciones y órdenes de compra que esta institución genera en el Mercado
                             Público.</p>
 
                     </div>
 
-                    <p class="h3 fw-bold">Etapas y Plazos</p>
+                    <span class="badge bg-dark text-white border border-white fs-3 mb-2">Etapas y Plazos</span>
                     <div class="p-2 rounded border mt-2 mb-4">
-                        <p class="mb-1 small">Fecha de Cierre de Recepcion de la Oferta: <strong
+                        <p class="mb-1 ">Fecha de Cierre de Recepcion de la Oferta: <strong
                                 id="detalle-fecha-cierre"></strong></p>
-                        <p class="mb-1 small">Fecha de Publicacion: <strong id="detalle-fecha-creacion"></strong></p>
-                        <p class="mb-1 small">Fecha Inicio de Preguntas: <strong id="detalle-fecha-inicio"></strong>
+                        <p class="mb-1 ">Fecha de Publicacion: <strong id="detalle-fecha-creacion"></strong></p>
+                        <p class="mb-1 ">Fecha Inicio de Preguntas: <strong id="detalle-fecha-inicio"></strong>
                         </p>
-                        <p class="mb-1 small">Fecha Final de Preguntas: <strong id="detalle-fecha-final"></strong></p>
-                        <p class="mb-1 small">Fecha Publicacion de Respuestas: <strong id="detalle-fecha-pub"></strong>
+                        <p class="mb-1 ">Fecha Final de Preguntas: <strong id="detalle-fecha-final"></strong></p>
+                        <p class="mb-1 ">Fecha Publicacion de Respuestas: <strong id="detalle-fecha-pub"></strong>
                         </p>
-                        <p class="mb-1 small">Fecha de Acto de Apertura Tecnica: <strong
-                                id="detalle-fecha-tecnica"></strong></p>
-                        <p class="mb-1 small">Fecha de Acto de Apertura Economica: <strong
+                        <p class="mb-1 ">Fecha de Acto de Apertura Tecnica: <strong id="detalle-fecha-tecnica"></strong>
+                        </p>
+                        <p class="mb-1 ">Fecha de Acto de Apertura Economica: <strong
                                 id="detalle-fecha-economica"></strong></p>
-                        <p class="mb-1 small">Fecha de Adjudicacion: <strong id="detalle-fecha-adjudicacion"></strong>
+                        <p class="mb-1 ">Fecha de Adjudicacion: <strong id="detalle-fecha-adjudicacion"></strong>
                         </p>
                     </div>
-                    
-                    <p class="h3 fw-bold">Montos y Duracion de Contrato</p>
+
+                    <span class="badge bg-dark text-white border border-white fs-3 mb-2">Montos y Duracion de Contrato</span>
                     <div class="p-2 rounded border mt-2 mb-4">
-                        <p class="mb-1 small">Estimacion en base a: <strong id="detalle-estimacion-base"></strong></p>
-                        <p class="mb-1 small">Fuente de Financiamiento: <strong id="detalle-fuente-financiamiento">No Especifica</strong></p>
-                        <p class="mb-1 small">Monto Total Estimado: <strong id="detalle-monto-estimado"></strong></p>
-                        <p class="mb-1 small">Nombre Responsable del Pago: <strong id="detalle-responsable-pago"></strong>
+                        <p class="mb-1 ">Estimacion en base a: <strong id="detalle-estimacion-base"></strong></p>
+                        <p class="mb-1 ">Fuente de Financiamiento: <strong id="detalle-fuente-financiamiento">No
+                                Especifica</strong></p>
+                        <p class="mb-1 ">Monto Total Estimado: <strong id="detalle-monto-estimado"></strong></p>
+                        <p class="mb-1 ">Nombre Responsable del Pago: <strong id="detalle-responsable-pago"></strong>
                         </p>
-                        <p class="mb-1 small">Contrato con Renovacion: <strong id="detalle-renovacion-contrato"></strong></p>
-                        <p class="mb-1 small">Nombre Responsable del Contrato: <strong
+                        <p class="mb-1 ">Contrato con Renovacion: <strong id="detalle-renovacion-contrato"></strong></p>
+                        <p class="mb-1 ">Nombre Responsable del Contrato: <strong
                                 id="detalle-responsable-contrato"></strong></p>
                     </div>
+                </div>
             </header>
-
+            
+            <span class="badge bg-dark text-white border border-white fs-3 mb-2">Productos o Servicios</span>
             <div class="row g-4">
                 <div class="col-12">
-                    <p class="h3 fw-bold mb-4" tabindex="0">Productos o Servicios
-                    </p>
                     <div class="table-responsive">
-                        <table class="rounded table table-hover align-middle mb-0"
+                        <table class="table table-hover align-middle mb-0"
                             aria-label="Lista de productos incluidos en la licitación">
                             <thead class="table-dark text-center">
                                 <tr>

@@ -35,8 +35,8 @@
                 <i class="fas fa-adjust"></i>
             </button>
             <div class="dropdown">
-                <button class="btn btn-sm btn-contraste-rojo py-0 px-2 shadow-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">
+                <button class="btn btn-sm btn-contraste-rojo py-0 px-2 shadow-sm dropdown-toggle" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-universal-access"></i>
                     <span>Accesibilidad</span>
                 </button>
@@ -93,13 +93,33 @@
         <h1 class="mb-4 fw-bold" tabindex="0">Buscador de Licitaciones</h1>
 
         <div class="card p-4 shadow-sm border-0 mb-4">
+            <div class="row g-3">
+                <div class="col-md-10">
+                    <label for="input-codigo-directo" class="form-label fw-bold">
+                        <i class="fas fa-filter me-1"></i> Filtrar por Código de Licitación
+                    </label>
+                    <input type="text" id="input-codigo-directo" class="form-control " placeholder="Ej: 1502-12-LR26"
+                        aria-label="Introduce el código de la licitación">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-contraste-rojo w-100 py-2" type="button" id="btn-buscar-directo">
+                        <i class="fas fa-search me-1"></i> Buscar
+                    </button>
+                </div>
+                <div id="error-codigo-directo" class="invalid-feedback d-none">Por favor, ingrese un código válido para
+                    buscar.</div>
+            </div>
+        </div>
+        <div class="card p-4 shadow-sm border-0 mb-4">
             <form id="form-filtros" class="row g-3" aria-label="Filtros de búsqueda de licitaciones">
                 <div class="col-md-5">
-                    <label for="input-fecha" class="form-label fw-semibold">Fecha de consulta</label>
+                    <label for="input-fecha" class="form-label fw-semibold">
+                        <i class="fas fa-filter me-1"></i>Fecha de consulta</label>
                     <input type="date" class="form-control" id="input-fecha" required tabindex="0">
                 </div>
                 <div class="col-md-5">
-                    <label for="select-estado" class="form-label fw-semibold">Estado de la licitación</label>
+                    <label for="select-estado" class="form-label fw-semibold">
+                        <i class="fas fa-filter me-1"></i>Estado de la licitación</label>
                     <select class="form-select" id="select-estado" required tabindex="0">
                         <option value="" disabled selected>Seleccione un estado...</option>
                         <option value="publicada">Publicada</option>
@@ -109,7 +129,8 @@
                     </select>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-contraste-rojo w-100 py-2" tabindex="0">Buscar</button>
+                    <button type="submit" class="btn btn-contraste-rojo w-100 py-2" tabindex="0">
+                        <i class="fas fa-search me-1"></i>Buscar</button>
                 </div>
             </form>
         </div>
